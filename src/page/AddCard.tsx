@@ -1,6 +1,6 @@
 import React from 'react';
 import {useDispatch} from 'react-redux';
-import {View, Text, TextInput, Button, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +10,8 @@ import {RootStackParamList} from '../types/pageTypes';
 import {fetchProducts, saveProduct} from '../redux/action/cardAction';
 import {DispatchType} from './../redux/store';
 import {Product} from '../types/product';
+
+import CustomButton from '../component/CustomButton';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'AddCard'>;
@@ -90,18 +92,32 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
               <Text style={styles.error}>{errors.description}</Text>
             )}
 
-            <Button title="Add card" onPress={() => handleSubmit()} />
+            <View style={styles.wrapperButton}>
+              <CustomButton
+                borderColor="#002984"
+                outline={true}
+                textColor="#002984"
+                text="Back"
+                onPress={() => navigation.goBack()}
+              />
+
+              <CustomButton
+                bgColor="#FFC400"
+                textColor="#002984"
+                text="Add card"
+                onPress={() => handleSubmit()}
+              />
+            </View>
           </>
         )}
       </Formik>
-
-      <Button title="Back" onPress={() => navigation.goBack()} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
   },
 
@@ -109,6 +125,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     fontSize: 24,
+    color: '#002984',
   },
 
   input: {
@@ -122,6 +139,12 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginBottom: 10,
+  },
+
+  wrapperButton: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

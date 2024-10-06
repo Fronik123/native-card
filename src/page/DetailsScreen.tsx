@@ -1,8 +1,11 @@
 import React from 'react';
-import {View, Text, Button, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, StyleSheet} from 'react-native';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../types/pageTypes';
+
+import CustomButton from '../component/CustomButton';
+
 type DetailsScreenProps = StackNavigationProp<RootStackParamList, 'Details'>;
 
 type Props = {
@@ -33,7 +36,13 @@ const DetailsScreen: React.FC<Props> = ({navigation, route}) => {
         <Text style={styles.price}>$ {product.price}</Text>
       </View>
 
-      <Button title="Back" onPress={() => navigation.goBack()} />
+      <CustomButton
+        borderColor="#002984"
+        outline={true}
+        textColor="#002984"
+        text="Back"
+        onPress={() => navigation.goBack()}
+      />
     </View>
   );
 };

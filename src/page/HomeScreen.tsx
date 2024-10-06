@@ -2,7 +2,6 @@ import React, {useEffect, useMemo} from 'react';
 import {
   View,
   Text,
-  Button,
   FlatList,
   StyleSheet,
   ActivityIndicator,
@@ -14,6 +13,8 @@ import {fetchProducts} from '../redux/action/cardAction';
 import ProductCard from '../component/ProductCard';
 import {RootStackParamList} from '../types/pageTypes';
 import {StackNavigationProp} from '@react-navigation/stack';
+
+import CustomButton from '../component/CustomButton';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
@@ -47,8 +48,10 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
       </View>
 
       <View style={styles.wrapperButton}>
-        <Button
-          title="Add new card"
+        <CustomButton
+          bgColor="#002984"
+          textColor="#FFFFFF"
+          text="Add new card"
           onPress={() => navigation.navigate('AddCard')}
         />
       </View>
@@ -65,8 +68,10 @@ const styles = StyleSheet.create({
 
   store: {
     textAlign: 'center',
-    fontSize: 19,
+    fontSize: 22,
+    fontWeight: 'bold',
     marginBottom: 20,
+    color: '#002984',
   },
 
   listContainer: {
@@ -78,7 +83,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'gray',
+    borderColor: 'lightgray',
     borderRadius: 10,
     padding: 10,
     margin: 10,
@@ -86,6 +91,8 @@ const styles = StyleSheet.create({
 
   wrapperButton: {
     marginTop: 30,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
 

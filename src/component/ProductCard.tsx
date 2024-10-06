@@ -110,8 +110,10 @@ const styles = StyleSheet.create({
   },
 
   innerDelete: {
-    width: 80,
-    borderRadius: 10,
+    width: 60,
+    borderRadius: 5,
+    paddingTop: 2,
+    paddingBottom: 2,
     backgroundColor: 'red',
   },
 
