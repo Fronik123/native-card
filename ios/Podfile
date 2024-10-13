@@ -16,6 +16,16 @@ end
 
 target 'nativeCard' do
   config = use_native_modules!
+  
+  pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+  
 
   use_react_native!(
     :path => config[:reactNativePath],

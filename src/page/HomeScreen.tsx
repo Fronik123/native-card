@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,12 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerLeft: () => null,
+  //   });
+  // }, [navigation]);
 
   return (
     <View style={styles.container}>

@@ -5,6 +5,9 @@ export type RootStackParamList = {
   Home: undefined;
   Details: {product: Product};
   AddCard: undefined;
+  SignInScreen: undefined;
+  AuthLoadingScreen: undefined;
+  RegistrationScreen: undefined;
 };
 
 export const Stack = createStackNavigator<RootStackParamList>();

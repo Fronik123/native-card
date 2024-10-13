@@ -41,22 +41,22 @@ const styles = StyleSheet.create({
   buttonOutline: {
     borderWidth: 1,
     borderStyle: 'solid',
-    padding: 10,
-    borderRadius: 5,
-    width: 120,
-    height: 40,
+    padding: 15,
+    borderRadius: 100,
+    // width: 120,
+    height: 49,
   },
 
   button: {
-    padding: 10,
-    borderRadius: 5,
-    width: 120,
-    height: 40,
+    padding: 15,
+    borderRadius: 100,
+    // width: 120,
+    height: 49,
   },
 
   buttonText: {
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 500,
   },
 });
