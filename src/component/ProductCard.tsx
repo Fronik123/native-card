@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {fetchProducts, deleteProduct} from '../redux/action/cardAction';
+import {fetchProducts, deleteProduct} from '../redux/action/cardsAction';
 import {DispatchType} from './../redux/store';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../types/pageTypes';

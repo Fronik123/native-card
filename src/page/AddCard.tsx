@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 
 import {RootStackParamList} from '../types/pageTypes';
 
-import {fetchProducts, saveProduct} from '../redux/action/cardAction';
+import {fetchProducts, saveProduct} from '../redux/action/cardsAction';
 import {DispatchType} from './../redux/store';
 import {Product} from '../types/product';
 

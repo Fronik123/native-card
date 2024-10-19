@@ -40,7 +40,6 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) => {
         values.password,
       );
       navigation.goBack();
-      // console.log('Пользователь успешно зарегистрирован!');
     } catch (e) {
       Alert.alert(e.message);
     }

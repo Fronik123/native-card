@@ -9,7 +9,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 
 import {StateType, DispatchType} from './../redux/store';
-import {fetchProducts} from '../redux/action/cardAction';
+import {fetchProducts, getDataFirebase} from '../redux/action/cardsAction';
 import ProductCard from '../component/ProductCard';
 import {RootStackParamList} from '../types/pageTypes';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -22,11 +22,11 @@ type Props = {
 
 const HomeScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
-  const {card, loading} = useSelector((state: StateType) => state.card);
-  const mamoizedProducts = useMemo(() => card, [card]);
+  const {cards, loading} = useSelector((state: StateType) => state.cards);
+  const mamoizedProducts = useMemo(() => cards, [cards]);
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(getDataFirebase());
   }, [dispatch]);
 
   // useEffect(() => {
@@ -43,6 +43,7 @@ const HomeScreen: React.FC<Props> = ({navigation}) => {
           <ActivityIndicator size="large" color="green" />
         ) : (
           <FlatList
+            horizontal
             data={mamoizedProducts}
             renderItem={({item}) => (
               <ProductCard product={item} navigation={navigation} />
