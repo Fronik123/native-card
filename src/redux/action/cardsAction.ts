@@ -72,8 +72,11 @@ export const getDataFirebase = createAsyncThunk(
         image: doc.data().img,
         description: doc.data().description,
         price: doc.data().price,
+        isUsed: doc.data().isUsed,
+        category: doc.data().category,
+        userId: doc.data().userId,
       }));
-
+      console.log('herer cards', cards);
       return cards;
     } catch (error) {
       console.log('badddddddddd');

@@ -1,19 +1,54 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {fetchProducts, deleteProduct} from '../redux/action/cardsAction';
-import {DispatchType} from './../redux/store';
+import {DispatchType, StateType} from './../redux/store';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../types/pageTypes';
+// import {StackScreenProps} from '@react-navigation/stack';
+
 import {Product} from '../types/product';
+//type
+import {RootStackParamList, RootBottomParamList} from '../types/pageTypes';
+import {CompositeNavigationProp} from '@react-navigation/native';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+
+//redux
+// import {toggleFavorite} from '../redux/reducers/favoriteSlice';
+import {fetchUserData} from '../redux/action/userAction';
+import {
+  fetchFavoriteCards,
+  toggleFavorite,
+} from '../redux/action/favoriteCardsAction';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 interface ProductCardProps {
   product: Product;
-  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+  navigation: CompositeNavigationProp<
+    BottomTabNavigationProp<RootBottomParamList, 'NewCardStack'>,
+    StackNavigationProp<RootStackParamList>
+  >;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
   const dispatch = useDispatch<DispatchType>();
+  const favoriteCards = useSelector(
+    (state: StateType) => state.favorites.favoriteCards,
+  );
+  const {userData} = useSelector((state: StateType) => state.user);
+
+  const isOwns = userData?.id === product.userId;
+  const isFavorite = favoriteCards.includes(product.id.toString());
+
+  useEffect(() => {
+    dispatch(fetchFavoriteCards());
+    dispatch(fetchUserData());
+  }, [dispatch]);
+
+  const favoriteCard = (id: string) => {
+    dispatch(toggleFavorite(id));
+  };
+
   const openDetails = () => {
     navigation.navigate('Details', {product});
   };
@@ -30,15 +65,37 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
   return (
     <TouchableOpacity onPress={() => openDetails()}>
       <View style={styles.card}>
-        {product.image ? (
-          <Image source={{uri: product.image}} style={styles.image} />
-        ) : (
-          <View style={styles.containerNoImg}>
-            <Text style={styles.noImg}>No IMG</Text>
-          </View>
+        <View style={styles.wrapperImg}>
+          {product.image ? (
+            <Image source={{uri: product.image}} style={styles.image} />
+          ) : (
+            <View style={styles.containerNoImg}>
+              <Text style={styles.noImg}>No IMG</Text>
+            </View>
+          )}
+        </View>
+
+        {!isOwns && (
+          <TouchableOpacity
+            onPress={() => favoriteCard(product.id.toString())}
+            style={styles.containerFavotite}>
+            <View>
+              {isFavorite ? (
+                <Image
+                  source={require('../assets/icon/card/favorit-activ.png')}
+                />
+              ) : (
+                <Image source={require('../assets/icon/card/favorit.png')} />
+              )}
+            </View>
+          </TouchableOpacity>
         )}
 
         <View style={styles.info}>
+          <Text style={styles.title}>{product.title}</Text>
+          <Text style={styles.price}>$ {product.price}</Text>
+        </View>
+        {/* <View style={styles.info}>
           <View>
             <Text style={styles.title}>{product.title}</Text>
             <Text style={styles.price}>$ {product.price}</Text>
@@ -51,7 +108,7 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
               <Text style={styles.deleteText}>Delete</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
   );
@@ -60,15 +117,30 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-
-    flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    padding: 10,
+
     margin: 10,
+
+    paddingBottom: 10,
+    backgroundColor: '#F4F4F4',
+  },
+
+  wrapperImg: {
+    borderRadius: 8,
+    paddingTop: 3,
+    paddingRight: 3,
+    paddingLeft: 3,
+    backgroundColor: '#EEEEEE',
     alignItems: 'center',
-    paddingVertical: 10,
+    position: 'relative',
+  },
+
+  containerFavotite: {
+    position: 'absolute',
+    right: 5,
+    top: 5,
   },
 
   image: {
@@ -78,6 +150,8 @@ const styles = StyleSheet.create({
   },
 
   containerNoImg: {
+    borderTopEndRadius: 8,
+    borderTopStartRadius: 8,
     width: 100,
     height: 100,
     alignItems: 'center',
@@ -100,9 +174,7 @@ const styles = StyleSheet.create({
   info: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
     paddingLeft: 10,
-    height: '100%',
   },
 
   wrapperDelete: {

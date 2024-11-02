@@ -48,13 +48,10 @@ export const cardSlice = createSlice({
       .addCase(getDataFirebase.fulfilled, (state, action) => {
         state.loading = false;
         state.cards = action.payload;
-        console.log('herer there', action.payload);
       })
       .addCase(getDataFirebase.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Unknown error';
-        console.log('herer action.error.message', action.error.message); // потом посмотрет ьи выбрать
-        console.log('action.payload', action.payload); // 2 вторйо вариант
       });
   },
 });

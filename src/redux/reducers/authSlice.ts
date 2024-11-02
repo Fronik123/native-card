@@ -10,12 +10,14 @@ export type User = {
 
 interface AuthState {
   user: null | User;
+  loginTest: boolean;
   loading: boolean;
   error: string | null;
 }
 //don't working
 const initialState: AuthState = {
   user: null,
+  loginTest: false,
   loading: false,
   error: null,
 };
@@ -26,6 +28,9 @@ export const authSlice = createSlice({
   reducers: {
     loadUser: (state, action) => {
       state.user = action.payload;
+    },
+    loginTestChange: (state, action) => {
+      state.loginTest = action.payload;
     },
   },
   extraReducers: builder => {
@@ -57,6 +62,6 @@ export const authSlice = createSlice({
       });
   },
 });
-export const {loadUser} = authSlice.actions;
+export const {loadUser, loginTestChange} = authSlice.actions;
 export default authSlice.reducer;
 //don't working

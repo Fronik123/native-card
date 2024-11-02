@@ -29,7 +29,7 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) => {
     // password: Yup.string().required('Required field'),
   });
 
-  const handleSubmit = async (values: {
+  const onSubmit = async (values: {
     email: string;
     password: string;
     name: string;
@@ -40,7 +40,7 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) => {
         values.password,
       );
       navigation.goBack();
-    } catch (e) {
+    } catch (e: any) {
       Alert.alert(e.message);
     }
   };
@@ -52,20 +52,9 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) => {
       <Formik
         initialValues={{name: '', email: '', password: '', confirmPassword: ''}}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}>
+        onSubmit={onSubmit}>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
           <>
-            {/* <TextInput
-              style={styles.input}
-              placeholder="Product name"
-              onChangeText={handleChange('productName')}
-              onBlur={handleBlur('productName')}
-              value={values.productName}
-            />
-            {errors.productName && (
-              <Text style={styles.error}>{errors.productName}</Text>
-            )} */}
-
             <CustomInput
               placeholder="First name"
               value={values.name}
@@ -98,34 +87,14 @@ const RegistrationScreen: React.FC<Props> = ({navigation}) => {
               errors={errors.confirmPassword}
             />
 
-            {/* <TextInput
-              style={styles.input}
-              placeholder="Price"
-              keyboardType="numeric"
-              onChangeText={handleChange('price')}
-              onBlur={handleBlur('price')}
-              value={values.price}
-            />
-            {errors.price && <Text style={styles.error}>{errors.price}</Text>}
-
-            <TextInput
-              style={styles.input}
-              placeholder="Description product"
-              onChangeText={handleChange('description')}
-              onBlur={handleBlur('description')}
-              value={values.description}
-            />
-            {errors.description && (
-              <Text style={styles.error}>{errors.description}</Text>
-            )} */}
-
             <CustomButton
               bgColor="#8E6CEF"
               textColor="#FFFFFF"
               text="Create account"
               onPress={() => handleSubmit()}
             />
-            <View style={{marginTop: 16}}>
+
+            <View style={styles.containerBack}>
               <CustomButton
                 borderColor="#8E6CEF"
                 outline={true}
@@ -151,6 +120,10 @@ const styles = StyleSheet.create({
   },
 
   textAccount: {
+    marginTop: 16,
+  },
+
+  containerBack: {
     marginTop: 16,
   },
 });

@@ -7,14 +7,22 @@ import * as Yup from 'yup';
 
 import {RootStackParamList} from '../types/pageTypes';
 
-import {fetchProducts, saveProduct} from '../redux/action/cardsAction';
-import {DispatchType} from './../redux/store';
+// import {fetchProducts, getDataFirebase} from '../redux/action/cardsAction';
+import {
+  fetchProducts,
+  saveProduct,
+  getDataFirebase,
+} from '../redux/action/cardsAction';
+import {DispatchType} from '../redux/store';
 import {Product} from '../types/product';
 
 import CustomButton from '../component/CustomButton';
 
+import firebase from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+
 type Props = {
-  navigation: StackNavigationProp<RootStackParamList, 'AddCard'>;
+  navigation: StackNavigationProp<RootStackParamList, 'AddCardScreen'>;
 };
 
 const validationSchema = Yup.object().shape({
@@ -29,35 +37,55 @@ const validationSchema = Yup.object().shape({
 const AddCardScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
 
-  const handleSubmit = async (values: any) => {
-    const newProduct: Product = {
-      id: Date.now(),
+  // const handleSubmit = async (values: any) => {
+  //   const newProduct: Product = {
+  //     id: Date.now(),
+  //     title: values.productName,
+  //     price: parseFloat(values.price || 0),
+  //     description: values.description,
+  //   };
+
+  //   try {
+  //     await dispatch(saveProduct(newProduct)).unwrap();
+  //     await dispatch(fetchProducts());
+
+  //     values.productName = '';
+  //     values.price = '';
+  //     values.description = '';
+
+  //     navigation.goBack();
+  //   } catch (error) {
+  //     console.error('Error', error);
+  //   }
+  // };
+
+  const userId = auth().currentUser?.uid;
+
+  const onSubmit = (values: any) => {
+    console.log('jerer', values);
+    firebase().collection('cards').add({
+      userId: userId,
+      img: '',
       title: values.productName,
-      price: parseFloat(values.price || 0),
       description: values.description,
-    };
-
-    try {
-      await dispatch(saveProduct(newProduct)).unwrap();
-      await dispatch(fetchProducts());
-
-      values.productName = '';
-      values.price = '';
-      values.description = '';
-
-      navigation.goBack();
-    } catch (error) {
-      console.error('Error', error);
-    }
+      price: values.price,
+    });
+    dispatch(getDataFirebase());
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Add product</Text>
       <Formik
-        initialValues={{productName: '', price: '', description: ''}}
+        initialValues={{
+          productName: '',
+          price: '',
+          description: '',
+          isFavorite: false,
+          category: '',
+        }}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}>
+        onSubmit={onSubmit}>
         {({handleChange, handleBlur, handleSubmit, values, errors}) => (
           <>
             <TextInput
@@ -94,20 +122,20 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
 
             <View style={styles.wrapperButton}>
               <CustomButton
-                borderColor="#002984"
-                outline={true}
-                textColor="#002984"
-                text="Back"
-                onPress={() => navigation.goBack()}
-              />
-
-              <CustomButton
-                bgColor="#FFC400"
-                textColor="#002984"
+                bgColor="#8E6CEF"
+                textColor="#ffff"
                 text="Add card"
                 onPress={() => handleSubmit()}
               />
             </View>
+
+            <CustomButton
+              borderColor="#8E6CEF"
+              outline={true}
+              textColor="#8E6CEF"
+              text="Back"
+              onPress={() => navigation.goBack()}
+            />
           </>
         )}
       </Formik>
@@ -142,9 +170,7 @@ const styles = StyleSheet.create({
   },
 
   wrapperButton: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginVertical: 16,
   },
 });
 

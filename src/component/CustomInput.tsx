@@ -8,6 +8,7 @@ type Props = {
   onChangeText: (text: string) => void;
   onBlur?: (text: any) => void; //chnge ts
   errors?: any;
+  editable?: boolean;
 };
 
 const CustomInput: React.FC<Props> = ({
@@ -17,18 +18,20 @@ const CustomInput: React.FC<Props> = ({
   onChangeText,
   onBlur,
   errors,
+  editable = true,
 }) => {
   return (
     <View style={styles.container}>
       <TextInput
         onChangeText={onChangeText}
         onBlur={onBlur}
-        style={styles.input}
+        style={[styles.input, editable ? '' : styles.inputDisable]}
         placeholder={placeholder}
         value={value}
         autoCapitalize="none"
         secureTextEntry={secureTextEntry}
-        placeholderTextColor="#272727"
+        placeholderTextColor="rgba(39, 39, 39, 0.5)"
+        editable={editable}
       />
 
       {errors && <Text style={styles.error}>{errors}</Text>}
@@ -48,6 +51,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 4,
     width: '100%',
+  },
+
+  inputDisable: {
+    color: 'rgba(39, 39, 39, 0.5)',
   },
 
   error: {

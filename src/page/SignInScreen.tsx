@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 // import {NavigationContainer} from '@react-navigation/native';
 
@@ -8,6 +8,10 @@ import {StackNavigationProp} from '@react-navigation/stack';
 
 import CustomInput from '../component/CustomInput';
 import CustomButton from '../component/CustomButton';
+
+import {useDispatch, useSelector} from 'react-redux';
+import {StateType, DispatchType} from './../redux/store';
+import {loginTestChange} from '../redux/reducers/authSlice';
 
 import {Formik, FormikHelpers} from 'formik';
 import * as Yup from 'yup';
@@ -22,6 +26,8 @@ interface FormValues {
 }
 
 const SignInScreen: React.FC<Props> = ({navigation}) => {
+  const dispatch = useDispatch<DispatchType>();
+
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email format')
@@ -31,6 +37,11 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
       .required('Password is required'),
   });
 
+  const {loginTest} = useSelector((state: StateType) => state.auth);
+
+  useEffect(() => {
+    console.log('herer loginTest', loginTest);
+  }, []);
   const handleFirebaseLogin = async (
     values: FormValues,
     {setErrors}: FormikHelpers<FormValues>,
@@ -39,7 +50,8 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
       await auth().signInWithEmailAndPassword(values.email, values.password);
       // alert('Успешный вход!');
 
-      navigation.navigate('Home');
+      // navigation.navigate('Home');
+      dispatch(loginTestChange(true));
     } catch (error: any) {
       if (error.code === 'auth/invalid-email') {
         setErrors({email: 'Invalid email format'});
