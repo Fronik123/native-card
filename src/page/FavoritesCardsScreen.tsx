@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
 
   containerNoResult: {
     flex: 1,
+    padding: 15,
     justifyContent: 'center',
-    alignItems: 'center',
     width: '100%',
   },
 
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 27,
     fontWeight: '500',
-    // textAlign: 'center',
+    textAlign: 'center',
   },
 });
 

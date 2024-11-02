@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import CustomButton from '../component/CustomButton';
 import {RootStackParamList} from '../types/pageTypes';
@@ -20,80 +21,97 @@ import firebase from '@react-native-firebase/firestore';
 import {loginTestChange} from '../redux/reducers/authSlice';
 
 //component
+import ProductCard from '../component/ProductCard';
 
 type Props = {
   // navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };
 
+const screenWidth = Dimensions.get('window').width;
+const cardWidth = screenWidth / 2 - 15;
+
 const MyProductsScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
-  const [myCart, setMyCart] = useState([]);
+  const {cards} = useSelector((state: StateType) => state.cards);
+  const userId = auth().currentUser?.uid;
 
-  const getUserCards = async () => {
-    const user = auth().currentUser;
-    console.log('here user', user);
+  console.log('Products screen', cards);
+  console.log('Products userId', userId);
 
-    if (user) {
-      // console.log('after user', user.uid);
-      const snapshot = await firebase()
-        .collection('cards')
-        .where('userId', '==', user.uid)
-        // .orderBy('createdAt', 'desc')
-        .get();
-      // console.log('here snapshie', snapshot.docs);
-      const userCards = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+  const filterProduct = cards.filter(item => item.userId === userId);
+  console.log('filterProduct', filterProduct);
 
-      // console.log('curent dociment', userCards);
-      setMyCart(userCards);
-      return userCards;
-    } else {
-      console.log('User is not logged in.');
-      return [];
-    }
-  };
-
-  // const cards = productsSnapshot.docs.map(doc => ({
-  //   id: doc.id,
-  //   title: doc.data().title,
-  //   image: doc.data().img,
-  //   description: doc.data().description,
-  //   price: doc.data().price,
-  // }));
-
-  useEffect(() => {
-    getUserCards();
-  }, []);
+  useEffect(() => {}, []);
 
   return (
-    <View style={styles.container}>
-      <Text>My Products</Text>
+    <>
+      {filterProduct.length ? (
+        <View style={styles.container}>
+          <FlatList
+            data={filterProduct}
+            renderItem={({item}) => (
+              <View style={styles.cardWidth}>
+                <ProductCard product={item} navigation={navigation} />
+              </View>
+            )}
+            keyExtractor={item => item.id.toString()}
+            numColumns={2}
+          />
 
-      <FlatList
-        data={myCart}
-        renderItem={({item}) => (
-          <View style={styles.containerProduct}>
-            <Text>{item.title}</Text>
-            <Text>{item.price}</Text>
+          <View style={styles.containerButton}>
+            <CustomButton
+              bgColor="#8E6CEF"
+              textColor="#FFFFFF"
+              text="Add new card"
+              onPress={() =>
+                navigation.navigate('NewCardStack', {screen: 'AddCardScreen'})
+              }
+            />
           </View>
-        )}
-        keyExtractor={item => item.id.toString()}
-        // contentContainerStyle={styles.listContainer}
-      />
-    </View>
+        </View>
+      ) : (
+        <View style={styles.containerNoCard}>
+          <Text style={styles.textNoResult}>Your products is Empty</Text>
+
+          <CustomButton
+            bgColor="#8E6CEF"
+            textColor="#FFFFFF"
+            text="Add new product"
+            onPress={() =>
+              navigation.navigate('NewCardStack', {screen: 'AddCardScreen'})
+            }
+          />
+        </View>
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 20,
-    paddingLeft: 24,
-    paddingRight: 24,
+    padding: 15,
   },
-  containerProduct: {},
+
+  cardWidth: {
+    width: cardWidth,
+  },
+
+  containerButton: {
+    marginTop: 15,
+  },
+
+  containerNoCard: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 15,
+  },
+
+  textNoResult: {
+    textAlign: 'center',
+    marginBottom: 18,
+    fontSize: 27,
+    fontWeight: '500',
+  },
 });
 
 export default MyProductsScreen;

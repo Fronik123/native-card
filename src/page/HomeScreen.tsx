@@ -81,7 +81,7 @@ const HomeScreen: React.FC<HomeProps> = ({navigation}) => {
 
       <View style={styles.wrapperButton}>
         <CustomButton
-          bgColor="#002984"
+          bgColor="#8E6CEF"
           textColor="#FFFFFF"
           text="Add new card"
           onPress={() =>
@@ -123,17 +123,14 @@ const styles = StyleSheet.create({
     height: 250,
     alignContent: 'center',
     justifyContent: 'center',
-    // borderWidth: 2,
-    // borderColor: 'lightgray',
-    // borderRadius: 10,
-    // padding: 10,
-    marginLeft: 14,
+    marginLeft: 15,
   },
 
   wrapperButton: {
     marginTop: 30,
-    flexDirection: 'row',
     justifyContent: 'center',
+    marginRight: 15,
+    marginLeft: 15,
   },
 });
 
