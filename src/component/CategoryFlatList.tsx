@@ -18,6 +18,9 @@ import Rent from '../assets/icon/category/rent.png';
 import Home from '../assets/icon/category/home.png';
 import Fashion from '../assets/icon/category/fashion.png';
 
+import {useDispatch, useSelector} from 'react-redux';
+import {StateType, DispatchType} from './../redux/store';
+
 type Props = {
   cards: Product[];
   navigation: any;
@@ -34,7 +37,9 @@ const textImageMap: any = {
 };
 
 const CategoryFlatList: React.FC<Props> = ({cards, navigation}) => {
-  const uniqueCategories = [...new Set(cards.map(item => item.category))];
+  const uniqueCategories = useSelector(
+    (state: StateType) => state.cards.uniqueCategories,
+  );
 
   const handleAllCategory = (category: any) => {
     console.log('herer', category);

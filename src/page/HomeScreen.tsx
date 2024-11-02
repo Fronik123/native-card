@@ -37,6 +37,7 @@ interface HomeProps {
 
 const HomeScreen: React.FC<HomeProps> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
+
   const {cards, loading} = useSelector((state: StateType) => state.cards);
   const {loginTest} = useSelector((state: StateType) => state.auth);
   const mamoizedProducts = useMemo(() => cards, [cards]);

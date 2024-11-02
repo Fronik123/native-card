@@ -9,12 +9,14 @@ import {Product} from '../../types/product';
 
 interface Card {
   cards: Product[];
+  uniqueCategories: string[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: Card = {
   cards: [],
+  uniqueCategories: [],
   loading: false,
   error: null as string | null,
 };
@@ -48,6 +50,9 @@ export const cardSlice = createSlice({
       .addCase(getDataFirebase.fulfilled, (state, action) => {
         state.loading = false;
         state.cards = action.payload;
+        state.uniqueCategories = [
+          ...new Set(action.payload.map((card: Product) => card.category)),
+        ] as string[];
       })
       .addCase(getDataFirebase.rejected, (state, action) => {
         state.loading = false;
