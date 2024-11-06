@@ -12,7 +12,7 @@ const NewCardScreen: React.FC = () => {
       <Stack.Screen
         name="AddCardScreen"
         component={AddCardScreen}
-        options={{headerTitle: ''}}
+        options={{headerTitle: 'Add product'}}
       />
     </Stack.Navigator>
   );

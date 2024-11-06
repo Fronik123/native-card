@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, ScrollView} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -24,11 +24,17 @@ import CustomButton from '../component/CustomButton';
 import firebase from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
+//component
+import AddNewImage from '../component/AddNewImage';
+
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'AddCardScreen'>;
 };
 
 const validationSchema = Yup.object().shape({
+  img: Yup.array()
+    .min(1, 'You must select at least one image')
+    .required('Required field'),
   productName: Yup.string().required('Required field'),
   price: Yup.number()
     .required('Required field')
@@ -57,7 +63,7 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
   useEffect(() => {
     const transformedCategories = uniqueCategories.map(category => ({
       label: category,
-      value: category.toLowerCase().replace(/\s+/g, '_'),
+      value: category,
     }));
     setItems(transformedCategories);
   }, []);
@@ -90,7 +96,7 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
     console.log('jerer', values);
     firebase().collection('cards').add({
       userId: userId,
-      img: '',
+      img: values.img,
       title: values.productName,
       description: values.description,
       price: values.price,
@@ -100,13 +106,12 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Add product</Text>
       <Formik
         initialValues={{
+          img: [],
           productName: '',
           price: '',
           description: '',
-          isFavorite: false,
           category: '',
           used: null,
         }}
@@ -121,6 +126,12 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
           errors,
         }) => (
           <>
+            <AddNewImage
+              onImageSelect={(uri: string) => setFieldValue('img', uri)}
+            />
+
+            {errors.img && <Text style={styles.error}>{errors.img}</Text>}
+
             <TextInput
               style={styles.input}
               placeholder="Product name"
