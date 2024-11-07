@@ -66,8 +66,8 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
     <TouchableOpacity onPress={() => openDetails()}>
       <View style={styles.card}>
         <View style={styles.wrapperImg}>
-          {product.image ? (
-            <Image source={{uri: product.image}} style={styles.image} />
+          {product.image?.[0] ? (
+            <Image source={{uri: product.image[0]}} style={styles.image} />
           ) : (
             <View style={styles.containerNoImg}>
               <Text style={styles.noImg}>No IMG</Text>
