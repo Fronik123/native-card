@@ -1,4 +1,5 @@
 import {fetchUserData} from '../action/userAction';
+import {updateUserData} from '../action/userAction';
 import {createSlice} from '@reduxjs/toolkit';
 import {UserData} from '../../types/userData';
 
@@ -30,6 +31,18 @@ export const userSlice = createSlice({
         console.log('action', action.payload);
       })
       .addCase(fetchUserData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Unknown error';
+      })
+      .addCase(updateUserData.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userData = action.payload;
+      })
+      .addCase(updateUserData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Unknown error';
       });

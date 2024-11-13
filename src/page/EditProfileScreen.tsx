@@ -1,21 +1,20 @@
-import React from 'react';
-import {View, StyleSheet, FlatList, Text, Dimensions} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, Alert} from 'react-native';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../types/pageTypes';
+import {useDispatch, useSelector} from 'react-redux';
 
 //component
-import {StackScreenProps} from '@react-navigation/stack';
+import {DispatchType, StateType} from './../redux/store';
 import CustomInput from '../component/CustomInput';
 import CustomButton from '../component/CustomButton';
+
+import {updateUserData} from '../redux/action/userAction';
 
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
-// type EditProfileScreenProps = StackNavigationProp<
-//   RootStackParamList,
-//   'CategoryScreen'
-// >;
 type EditProfileScreenProps = StackNavigationProp<
   RootStackParamList,
   'EditProfileScreen'
@@ -23,23 +22,43 @@ type EditProfileScreenProps = StackNavigationProp<
 
 type Props = {
   navigation: EditProfileScreenProps;
-  // route: RouteProp<RootStackParamList, 'ShowAllCardsScreen'>;
+  route: RouteProp<RootStackParamList, 'EditProfileScreen'>;
 };
 
 const EditProfileScreen: React.FC<Props> = ({navigation, route}) => {
+  const dispatch = useDispatch<DispatchType>();
   const currentUser = route.params.userData;
 
-  // console.log('herer cards', typeof cards);
-  console.log('herer currentUser', currentUser);
+  const {loading, error} = useSelector((state: StateType) => state.user);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Required field'),
     surname: Yup.string(),
     email: Yup.string().required('Required field'),
-    phone: Yup.string().required('Required field'),
+    phone: Yup.number().required('Required field'),
   });
 
-  const handleSubmit = () => {};
+  useEffect(() => {
+    if (loading) {
+      if (error) {
+        Alert.alert('', error);
+      } else {
+        Alert.alert('Success', 'Data updated successfully');
+      }
+    }
+  }, [loading, error]);
+
+  const handleSubmit = (values: any) => {
+    const data = {
+      id: currentUser.id,
+      name: values.name,
+      surname: values.surname,
+      phone: values.phone,
+      email: values.email,
+    };
+
+    dispatch(updateUserData({userId: currentUser.id, newData: data}));
+  };
 
   return (
     <View style={styles.container}>

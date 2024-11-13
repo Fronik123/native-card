@@ -1,7 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {UserData} from '../../types/userData';
+import {UserData, UpdateUser} from '../../types/userData';
 
 export const fetchUserData = createAsyncThunk(
   'user/fetchUserData',
@@ -26,5 +26,17 @@ export const fetchUserData = createAsyncThunk(
       }
     }
     return null;
+  },
+);
+
+export const updateUserData = createAsyncThunk<UserData, UpdateUser>(
+  'user/updateUserData',
+  async ({userId, newData}, thunkAPI) => {
+    try {
+      await firestore().collection('users').doc(userId).update(newData);
+      return newData;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   },
 );

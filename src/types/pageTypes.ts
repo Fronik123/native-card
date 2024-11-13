@@ -1,4 +1,5 @@
 import {Product} from '../types/product';
+import {UserData} from './userData';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigatorScreenParams} from '@react-navigation/native';
@@ -18,7 +19,7 @@ export type RootStackParamList = {
   CurrentCategoryScreen: undefined;
   ShowAllCardsScreen: {cards: Product[]};
   FavoritesCardsScreen: undefined;
-  EditProfileScreen: undefined;
+  EditProfileScreen: {userData: UserData};
   // TabNavig: undefined;
   // SettingStack: undefined;
 };
