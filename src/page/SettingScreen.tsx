@@ -14,14 +14,12 @@ import {StackNavigationProp} from '@react-navigation/stack';
 
 import {StateType, DispatchType} from './../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 
 //action
 import {fetchUserData} from '../redux/action/userAction';
 
 //slice
-import {loginTestChange} from '../redux/reducers/authSlice';
+import {logout} from '../redux/reducers/authSlice';
 
 //component
 import CustomLongButton from '../component/CustomLongButton';
@@ -45,7 +43,7 @@ const SettingScreen: React.FC<Props> = ({navigation}) => {
   // const isOwner = cards.id === userData?.id;
 
   const LogOut = () => {
-    dispatch(loginTestChange(false));
+    dispatch(logout(null));
   };
 
   const Edit = () => {

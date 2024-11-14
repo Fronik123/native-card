@@ -1,30 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import axios from 'axios';
 import {Product, NewProduct} from '../../types/product';
 
 //firebasestore
 import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/app';
-
-export const deleteProduct = createAsyncThunk<Product[], number>(
-  'card/deleteProduct',
-  async productId => {
-    const storedProducts = await AsyncStorage.getItem('card');
-    const products: Product[] = storedProducts
-      ? JSON.parse(storedProducts)
-      : [];
-
-    const updatedProducts = products.filter(
-      product => product.id !== productId,
-    );
-
-    await AsyncStorage.setItem('card', JSON.stringify(updatedProducts));
-    return updatedProducts;
-  },
-);
-
-//firebase
 
 export const getDataFirebase = createAsyncThunk(
   'cards/fetchCards',
@@ -74,6 +54,21 @@ export const createNewCard = createAsyncThunk(
       });
       console.log('herer cardData ADD', cardData);
       return {...cardData};
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const deleteCard = createAsyncThunk(
+  'cards/deleteCard',
+  async (cardId: string, {rejectWithValue}) => {
+    try {
+      const cardRef = firestore().collection('cards').doc(cardId);
+
+      await cardRef.delete();
+
+      return cardId;
     } catch (error) {
       return rejectWithValue(error);
     }

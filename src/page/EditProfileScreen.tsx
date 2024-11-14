@@ -39,12 +39,11 @@ const EditProfileScreen: React.FC<Props> = ({navigation, route}) => {
   });
 
   useEffect(() => {
+    if (error) {
+      Alert.alert('', error);
+    }
     if (loading) {
-      if (error) {
-        Alert.alert('', error);
-      } else {
-        Alert.alert('Success', 'Data updated successfully');
-      }
+      Alert.alert('Success', 'Data updated successfully');
     }
   }, [loading, error]);
 

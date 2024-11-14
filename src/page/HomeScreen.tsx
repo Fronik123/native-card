@@ -24,9 +24,6 @@ import CustomButton from '../component/CustomButton';
 import CategoryFlatList from '../component/CategoryFlatList';
 import SearchInput from '../component/SearchInput';
 
-//slice
-import {loginTestChange} from '../redux/reducers/authSlice';
-
 type Props = CompositeScreenProps<
   BottomTabScreenProps<RootBottomParamList, 'NewCardStack'>,
   StackScreenProps<RootStackParamList, 'Home'>

@@ -1,9 +1,7 @@
 import {
-  fetchProducts,
-  saveProduct,
-  deleteProduct,
   getDataFirebase,
   createNewCard,
+  deleteCard,
 } from '../action/cardsAction';
 import {createSlice} from '@reduxjs/toolkit';
 import {Product} from '../../types/product';
@@ -51,17 +49,6 @@ export const cardSlice = createSlice({
       .addCase(getDataFirebase.fulfilled, (state, action) => {
         state.loading = false;
         state.cards = action.payload;
-        // state.cards = [...action.payload].sort((a, b) => {
-        //   const dateA = new Date(a.createdAt).getTime();
-        //   const dateB = new Date(b.createdAt).getTime();
-        //   return dateB - dateA;
-        // });
-        // const dateB = new Date(b.createdAt).getTime();});
-        // return [...cards].sort((a, b) => {
-        // const dateA = new Date(a.createdAt).getTime();
-        // const dateB = new Date(b.createdAt).getTime();
-        // return dateB - dateA;
-        // });
         console.log('herer id ', action.payload.id);
         state.uniqueCategories = [
           ...new Set(action.payload.map((card: Product) => card.category)),
@@ -74,14 +61,22 @@ export const cardSlice = createSlice({
       .addCase(createNewCard.pending, state => {
         state.loading = true;
       })
-      .addCase(createNewCard.fulfilled, (state, action) => {
+      .addCase(createNewCard.fulfilled, state => {
         state.loading = false;
-        // state.cards = [...state.cards, action.payload];
-        // state.cards.unshift(action.payload);
       })
       .addCase(createNewCard.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(deleteCard.pending, state => {
+        state.loading = true;
+      })
+      .addCase(deleteCard.fulfilled, (state, action) => {
+        state.loading = false;
+        state.cards = state.cards.filter(card => card.id !== action.payload);
+      })
+      .addCase(deleteCard.rejected, state => {
+        state.loading = false;
       });
   },
 });

@@ -1,10 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchProducts, deleteProduct} from '../redux/action/cardsAction';
 import {DispatchType, StateType} from './../redux/store';
 import {StackNavigationProp} from '@react-navigation/stack';
-// import {StackScreenProps} from '@react-navigation/stack';
 
 import {Product} from '../types/product';
 //type
@@ -13,14 +11,12 @@ import {CompositeNavigationProp} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 //redux
-// import {toggleFavorite} from '../redux/reducers/favoriteSlice';
 import {fetchUserData} from '../redux/action/userAction';
 import {
   fetchFavoriteCards,
   toggleFavorite,
 } from '../redux/action/favoriteCardsAction';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import {deleteCard} from '../redux/action/cardsAction';
 
 interface ProductCardProps {
   product: Product;
@@ -53,13 +49,8 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
     navigation.navigate('Details', {product});
   };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await dispatch(deleteProduct(id)).unwrap();
-      dispatch(fetchProducts());
-    } catch (error) {
-      console.error('Error', error);
-    }
+  const handleDelete = async (id: string) => {
+    dispatch(deleteCard(id));
   };
 
   return (
@@ -77,7 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
 
         {!isOwns && (
           <TouchableOpacity
-            onPress={() => favoriteCard(product.id.toString())}
+            onPress={() => favoriteCard(product.id)}
             style={styles.containerFavotite}>
             <View>
               {isFavorite ? (
@@ -95,12 +86,8 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
           <Text style={styles.title}>{product.title}</Text>
           <Text style={styles.price}>$ {product.price}</Text>
         </View>
-        {/* <View style={styles.info}>
-          <View>
-            <Text style={styles.title}>{product.title}</Text>
-            <Text style={styles.price}>$ {product.price}</Text>
-          </View>
 
+        {isOwns && (
           <View style={styles.wrapperDelete}>
             <TouchableOpacity
               style={styles.innerDelete}
@@ -108,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
               <Text style={styles.deleteText}>Delete</Text>
             </TouchableOpacity>
           </View>
-        </View> */}
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -179,6 +166,7 @@ const styles = StyleSheet.create({
 
   wrapperDelete: {
     alignItems: 'flex-end',
+    paddingRight: 5,
   },
 
   innerDelete: {
@@ -186,12 +174,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingTop: 2,
     paddingBottom: 2,
-    backgroundColor: 'red',
+    borderColor: 'red',
+    borderWidth: 1,
   },
 
   deleteText: {
-    color: '#ffff',
+    color: 'red',
     textAlign: 'center',
+    fontSize: 12,
   },
 });
 

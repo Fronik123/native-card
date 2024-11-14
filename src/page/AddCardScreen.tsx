@@ -84,10 +84,10 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
   }, []);
 
   useEffect(() => {
+    if (error) {
+      Alert.alert('', error);
+    }
     if (loading) {
-      if (error) {
-        Alert.alert('', error);
-      }
       Alert.alert('', 'Add new product', [
         {
           text: 'Ok',

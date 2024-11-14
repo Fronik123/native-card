@@ -25,8 +25,8 @@ const DetailsScreen: React.FC<Props> = ({navigation, route}) => {
     <View style={styles.container}>
       {allImg?.[0] ? (
         <Swiper loop={false}>
-          {allImg?.map(item => (
-            <View style={styles.slide1}>
+          {allImg?.map((item, index) => (
+            <View style={styles.slide1} key={index}>
               <Image source={{uri: item || undefined}} style={styles.image} />
             </View>
           ))}

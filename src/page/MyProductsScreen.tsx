@@ -17,9 +17,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import firebase from '@react-native-firebase/firestore';
 
-//slice
-import {loginTestChange} from '../redux/reducers/authSlice';
-
 //component
 import ProductCard from '../component/ProductCard';
 
@@ -34,9 +31,6 @@ const MyProductsScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
   const {cards} = useSelector((state: StateType) => state.cards);
   const userId = auth().currentUser?.uid;
-
-  console.log('Products screen', cards);
-  console.log('Products userId', userId);
 
   const filterProduct = cards.filter(item => item.userId === userId);
   console.log('filterProduct', filterProduct);

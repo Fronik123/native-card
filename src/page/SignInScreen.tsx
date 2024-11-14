@@ -1,5 +1,12 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 // import {NavigationContainer} from '@react-navigation/native';
 
 import auth from '@react-native-firebase/auth';
@@ -11,7 +18,8 @@ import CustomButton from '../component/CustomButton';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {StateType, DispatchType} from './../redux/store';
-import {loginTestChange} from '../redux/reducers/authSlice';
+
+import {loginUser} from '../redux/action/authAction';
 
 import {Formik, FormikHelpers} from 'formik';
 import * as Yup from 'yup';
@@ -37,32 +45,16 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
       .required('Password is required'),
   });
 
-  const {loginTest} = useSelector((state: StateType) => state.auth);
+  const {loading, error} = useSelector((state: StateType) => state.auth);
 
   useEffect(() => {
-    console.log('herer loginTest', loginTest);
-  }, []);
-  const handleFirebaseLogin = async (
-    values: FormValues,
-    {setErrors}: FormikHelpers<FormValues>,
-  ) => {
-    try {
-      await auth().signInWithEmailAndPassword(values.email, values.password);
-      // alert('Успешный вход!');
-
-      // navigation.navigate('Home');
-      dispatch(loginTestChange(true));
-    } catch (error: any) {
-      if (error.code === 'auth/invalid-email') {
-        setErrors({email: 'Invalid email format'});
-      } else if (error.code === 'auth/user-not-found') {
-        setErrors({email: 'User not found'});
-      } else if (error.code === 'auth/wrong-password') {
-        setErrors({password: 'Incorrect password'});
-      } else {
-        Alert.alert('Error signing in. \n Try again.');
-      }
+    if (error) {
+      Alert.alert(error);
     }
+  }, [error]);
+
+  const handleFirebaseLogin = (values: {email: string; password: string}) => {
+    dispatch(loginUser(values));
   };
 
   const createAccount = () => {
@@ -112,6 +104,8 @@ const SignInScreen: React.FC<Props> = ({navigation}) => {
           <Text style={{fontWeight: '600'}}>Create one</Text>
         </Text>
       </TouchableOpacity>
+
+      {loading && <ActivityIndicator size="large" color="green" />}
     </View>
   );
 };
@@ -127,6 +121,7 @@ const styles = StyleSheet.create({
 
   textAccount: {
     marginTop: 16,
+    paddingBottom: 15,
   },
 });
 

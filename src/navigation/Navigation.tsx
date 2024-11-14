@@ -68,7 +68,7 @@ import {useDispatch, useSelector} from 'react-redux';
 // };
 
 const Navigation: React.FC = () => {
-  const {loginTest} = useSelector((state: StateType) => state.auth);
+  const {loginTest, user} = useSelector((state: StateType) => state.auth);
 
   useEffect(() => {
     console.log('herer Navigation', loginTest);
@@ -76,7 +76,7 @@ const Navigation: React.FC = () => {
 
   return (
     <NavigationContainer>
-      {!loginTest ? (
+      {!user ? (
         <Stack.Navigator
           // initialRouteName="SignInScreen"
           screenOptions={{

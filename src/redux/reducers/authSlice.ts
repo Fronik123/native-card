@@ -1,36 +1,29 @@
 import {loginUser} from '../action/authAction.ts';
 import {createSlice} from '@reduxjs/toolkit';
-// import User from '@react-native-firebase/auth';
-// import {User as FirebaseUser} from '@react-native-firebase/auth';
-//don't working
-export type User = {
-  email: string | null;
-  password: string;
-};
+// export type User = {
+//   email: string;
+// };
 
 interface AuthState {
-  user: null | User;
+  user: {email: string | null} | null;
   loginTest: boolean;
   loading: boolean;
   error: string | null;
 }
-//don't working
+
 const initialState: AuthState = {
   user: null,
   loginTest: false,
   loading: false,
   error: null,
 };
-//don't working
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loadUser: (state, action) => {
+    logout: (state, action) => {
       state.user = action.payload;
-    },
-    loginTestChange: (state, action) => {
-      state.loginTest = action.payload;
     },
   },
   extraReducers: builder => {
@@ -53,7 +46,6 @@ export const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        console.log('herer password?: string;', action.payload);
         state.user = action.payload;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -62,6 +54,5 @@ export const authSlice = createSlice({
       });
   },
 });
-export const {loadUser, loginTestChange} = authSlice.actions;
+export const {logout} = authSlice.actions;
 export default authSlice.reducer;
-//don't working
