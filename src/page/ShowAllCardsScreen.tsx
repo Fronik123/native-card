@@ -36,7 +36,7 @@ const ShowAllCardsScreen: React.FC<Props> = ({navigation, route}) => {
             <ProductCard product={item} navigation={navigation} />
           </View>
         )}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id}
         numColumns={2}
       />
     </View>

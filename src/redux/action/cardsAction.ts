@@ -1,40 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
-import {Product} from '../../types/product';
+import {Product, NewProduct} from '../../types/product';
 
 //firebasestore
 import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/app';
-
-export const fetchProducts = createAsyncThunk(
-  'card/fetchProducts',
-  async () => {
-    const storedProducts = await AsyncStorage.getItem('card');
-    if (storedProducts) {
-      return JSON.parse(storedProducts);
-    }
-
-    const response = await axios.get('https://fakestoreapi.com/products');
-    const data = response.data;
-    await AsyncStorage.setItem('card', JSON.stringify(data));
-    return data;
-  },
-);
-
-export const saveProduct = createAsyncThunk<Product[], Product>(
-  'card/saveProduct',
-  async product => {
-    const storedProducts = await AsyncStorage.getItem('card');
-    const products = storedProducts ? JSON.parse(storedProducts) : [];
-
-    products.unshift(product);
-
-    await AsyncStorage.setItem('card', JSON.stringify(products));
-
-    return products;
-  },
-);
 
 export const deleteProduct = createAsyncThunk<Product[], number>(
   'card/deleteProduct',
@@ -65,7 +36,10 @@ export const getDataFirebase = createAsyncThunk(
         return JSON.parse(cachedProducts);
       }
 
-      const productsSnapshot = await firestore().collection('cards').get();
+      const productsSnapshot = await firestore()
+        .collection('cards')
+        .orderBy('createdAt', 'desc')
+        .get();
       const cards = productsSnapshot.docs.map(doc => ({
         id: doc.id,
         title: doc.data().title,
@@ -75,14 +49,33 @@ export const getDataFirebase = createAsyncThunk(
         isUsed: doc.data().isUsed,
         category: doc.data().category,
         userId: doc.data().userId,
+        createdAt: doc.data().createdAt?.seconds
+          ? new Date(doc.data().createdAt.seconds * 1000).toISOString()
+          : doc.data().createdAt,
       }));
-      console.log('herer cards', cards);
       return cards;
     } catch (error) {
-      console.log('badddddddddd');
-      const err = error as Error; //позже проверить
+      const err = error as Error;
 
       return rejectWithValue(err.message);
+    }
+  },
+);
+
+export const createNewCard = createAsyncThunk(
+  'cards/addCard',
+  async (cardData: NewProduct, {rejectWithValue}) => {
+    try {
+      const newCardRef = firestore().collection('cards').doc();
+
+      await newCardRef.set({
+        ...cardData,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+      console.log('herer cardData ADD', cardData);
+      return {...cardData};
+    } catch (error) {
+      return rejectWithValue(error);
     }
   },
 );

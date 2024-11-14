@@ -1,54 +1,69 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {Formik} from 'formik';
+import {Formik, FormikHelpers} from 'formik';
 import * as Yup from 'yup';
 
 import {RootStackParamList} from '../types/pageTypes';
 
 import DropDownPicker from 'react-native-dropdown-picker';
 
-// import {fetchProducts, getDataFirebase} from '../redux/action/cardsAction';
-import {
-  fetchProducts,
-  saveProduct,
-  getDataFirebase,
-} from '../redux/action/cardsAction';
+import {getDataFirebase} from '../redux/action/cardsAction';
 import {useDispatch, useSelector} from 'react-redux';
 import {StateType, DispatchType} from './../redux/store';
 
 import {Product} from '../types/product';
+//action
+import {createNewCard} from '../redux/action/cardsAction';
 
-import CustomButton from '../component/CustomButton';
-
-import firebase from '@react-native-firebase/firestore';
+//firebase
 import auth from '@react-native-firebase/auth';
 
 //component
 import AddNewImage from '../component/AddNewImage';
+import CustomButton from '../component/CustomButton';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'AddCardScreen'>;
 };
 
+const initialValues = {
+  id: '',
+  userId: '',
+  image: [],
+  title: '',
+  price: 0,
+  description: '',
+  category: '',
+  isUsed: null,
+};
+
 const validationSchema = Yup.object().shape({
-  img: Yup.array()
+  image: Yup.array()
     .min(1, 'You must select at least one image')
     .required('Required field'),
-  productName: Yup.string().required('Required field'),
+  title: Yup.string().required('Required field'),
   price: Yup.number()
     .required('Required field')
     .positive('The price must be positive')
     .integer('The price must be an integer'),
   description: Yup.string().required('Required field'),
   category: Yup.string().required('Required field'),
-  used: Yup.boolean().required('Required field'),
+  isUsed: Yup.boolean().required('Required field'),
 });
 
 const AddCardScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
-  const uniqueCategories = useSelector(
-    (state: StateType) => state.cards.uniqueCategories,
+
+  const {uniqueCategories, loading, error} = useSelector(
+    (state: StateType) => state.cards,
   );
 
   const [open, setOpen] = useState(false);
@@ -68,53 +83,55 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
     setItems(transformedCategories);
   }, []);
 
-  // const handleSubmit = async (values: any) => {
-  //   const newProduct: Product = {
-  //     id: Date.now(),
-  //     title: values.productName,
-  //     price: parseFloat(values.price || 0),
-  //     description: values.description,
-  //   };
+  useEffect(() => {
+    if (loading) {
+      if (error) {
+        Alert.alert('', error);
+      }
+      Alert.alert('', 'Add new product', [
+        {
+          text: 'Ok',
+          onPress: () => {
+            navigation.goBack();
+          },
+        },
+      ]);
+      dispatch(getDataFirebase());
+      navigation.goBack();
+    }
+  }, [dispatch, loading, navigation, error]);
 
-  //   try {
-  //     await dispatch(saveProduct(newProduct)).unwrap();
-  //     await dispatch(fetchProducts());
+  const user = auth().currentUser;
 
-  //     values.productName = '';
-  //     values.price = '';
-  //     values.description = '';
+  const onSubmit = (
+    values: Product,
+    {resetForm}: FormikHelpers<typeof initialValues>,
+  ) => {
+    if (user) {
+      const userId = user.uid;
+      const allImg = values.image
+        ? values.image.map((item: any) => item.uri)
+        : [];
 
-  //     navigation.goBack();
-  //   } catch (error) {
-  //     console.error('Error', error);
-  //   }
-  // };
+      const data = {
+        userId: userId,
+        img: allImg,
+        title: values.title,
+        description: values.description,
+        price: values.price,
+        isUsed: values.isUsed,
+        category: values.category,
+      };
+      dispatch(createNewCard(data));
 
-  const userId = auth().currentUser?.uid;
-
-  const onSubmit = (values: any) => {
-    console.log('jerer', values);
-    firebase().collection('cards').add({
-      userId: userId,
-      img: values.img,
-      title: values.productName,
-      description: values.description,
-      price: values.price,
-    });
-    dispatch(getDataFirebase());
+      resetForm();
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Formik
-        initialValues={{
-          img: [],
-          productName: '',
-          price: '',
-          description: '',
-          category: '',
-          used: null,
-        }}
+        initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={onSubmit}>
         {({
@@ -127,37 +144,36 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
         }) => (
           <>
             <AddNewImage
-              onImageSelect={(uri: string) => setFieldValue('img', uri)}
+              onImageSelect={(uri: string) => setFieldValue('image', uri)}
             />
 
-            {errors.img && <Text style={styles.error}>{errors.img}</Text>}
+            {errors.image && <Text style={styles.error}>{errors.image}</Text>}
 
             <TextInput
               style={styles.input}
               placeholder="Product name"
-              onChangeText={handleChange('productName')}
-              onBlur={handleBlur('productName')}
-              value={values.productName}
+              onChangeText={handleChange('title')}
+              onBlur={handleBlur('title')}
+              value={values.title}
             />
-            {errors.productName && (
-              <Text style={styles.error}>{errors.productName}</Text>
-            )}
+            {errors.title && <Text style={styles.error}>{errors.title}</Text>}
 
             <DropDownPicker
               open={isOpenUsed}
-              value={values.used}
+              value={values.isUsed}
               items={itemUsed}
               setOpen={setisOpenUsed}
               setValue={callback =>
-                setFieldValue('used', callback(values.used))
+                setFieldValue('isUsed', callback(values.isUsed))
               }
               setItems={setItemUsed}
               placeholder="Used"
               style={styles.dropdown}
               placeholderStyle={styles.dropdownPlaceholder}
+              listMode="MODAL"
             />
 
-            {errors.used && <Text style={styles.error}>{errors.used}</Text>}
+            {errors.isUsed && <Text style={styles.error}>{errors.isUsed}</Text>}
 
             <TextInput
               style={styles.input}
@@ -165,7 +181,7 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
               keyboardType="numeric"
               onChangeText={handleChange('price')}
               onBlur={handleBlur('price')}
-              value={values.price}
+              value={values.price.toString()}
             />
             {errors.price && <Text style={styles.error}>{errors.price}</Text>}
 
@@ -192,6 +208,7 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
               placeholder="Select category"
               style={styles.dropdown}
               placeholderStyle={styles.dropdownPlaceholder}
+              listMode="MODAL"
             />
 
             {errors.category && (
@@ -217,14 +234,15 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
           </>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    margin: 20,
+    paddingBottom: 40,
   },
 
   header: {

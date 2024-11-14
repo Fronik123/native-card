@@ -73,7 +73,7 @@ const HomeScreen: React.FC<HomeProps> = ({navigation}) => {
             renderItem={({item}) => (
               <ProductCard product={item} navigation={navigation} />
             )}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id}
             contentContainerStyle={styles.listContainer}
           />
         )}

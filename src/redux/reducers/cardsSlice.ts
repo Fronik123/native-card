@@ -3,6 +3,7 @@ import {
   saveProduct,
   deleteProduct,
   getDataFirebase,
+  createNewCard,
 } from '../action/cardsAction';
 import {createSlice} from '@reduxjs/toolkit';
 import {Product} from '../../types/product';
@@ -50,13 +51,37 @@ export const cardSlice = createSlice({
       .addCase(getDataFirebase.fulfilled, (state, action) => {
         state.loading = false;
         state.cards = action.payload;
+        // state.cards = [...action.payload].sort((a, b) => {
+        //   const dateA = new Date(a.createdAt).getTime();
+        //   const dateB = new Date(b.createdAt).getTime();
+        //   return dateB - dateA;
+        // });
+        // const dateB = new Date(b.createdAt).getTime();});
+        // return [...cards].sort((a, b) => {
+        // const dateA = new Date(a.createdAt).getTime();
+        // const dateB = new Date(b.createdAt).getTime();
+        // return dateB - dateA;
+        // });
+        console.log('herer id ', action.payload.id);
         state.uniqueCategories = [
           ...new Set(action.payload.map((card: Product) => card.category)),
         ] as string[];
       })
       .addCase(getDataFirebase.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Unknown error';
+        state.error = action.payload as string;
+      })
+      .addCase(createNewCard.pending, state => {
+        state.loading = true;
+      })
+      .addCase(createNewCard.fulfilled, (state, action) => {
+        state.loading = false;
+        // state.cards = [...state.cards, action.payload];
+        // state.cards.unshift(action.payload);
+      })
+      .addCase(createNewCard.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

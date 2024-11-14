@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({product, navigation}) => {
   const {userData} = useSelector((state: StateType) => state.user);
 
   const isOwns = userData?.id === product.userId;
-  const isFavorite = favoriteCards.includes(product.id.toString());
+  const isFavorite = favoriteCards.includes(product.id);
 
   useEffect(() => {
     dispatch(fetchFavoriteCards());
