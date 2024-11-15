@@ -49,7 +49,6 @@ export const cardSlice = createSlice({
       .addCase(getDataFirebase.fulfilled, (state, action) => {
         state.loading = false;
         state.cards = action.payload;
-        console.log('herer id ', action.payload.id);
         state.uniqueCategories = [
           ...new Set(action.payload.map((card: Product) => card.category)),
         ] as string[];

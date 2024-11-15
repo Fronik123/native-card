@@ -5,7 +5,7 @@ import SignInScreen from './SignInScreen';
 import HomeScreen from './HomeScreen';
 
 interface Props {
-  navigation: any; // Или используйте правильный тип для навигации
+  navigation: any;
 }
 
 const AuthLoadingScreen: React.FC<Props> = ({navigation}) => {
@@ -19,7 +19,7 @@ const AuthLoadingScreen: React.FC<Props> = ({navigation}) => {
         setInitializing(false);
       }
     });
-    return subscriber; // отписываемся при размонтировании
+    return subscriber;
   }, []);
 
   if (initializing) {

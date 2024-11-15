@@ -45,7 +45,10 @@ export const registerUser = createAsyncThunk(
         password,
       );
 
-      await firestore().collection('users').doc(userCredential.user.uid).set({
+      const uid = userCredential.user.uid;
+
+      await firestore().collection('users').doc(uid).set({
+        id: uid,
         img,
         name,
         email,

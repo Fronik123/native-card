@@ -17,21 +17,6 @@ export const favoriteCardsSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      // .addCase(deleteProduct.fulfilled, state => {
-      //   state.cards = [];
-      // })
-      // .addCase(fetchFavoriteCards.pending, state => {
-      //   state.loading = true;
-      // })
-      // .addCase(fetchFavoriteCards.fulfilled, (state, action) => {
-      //   state.loading = false;
-      //   state.cards = action.payload;
-      // })
-      // .addCase(fetchFavoriteCards.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.error.message || 'Unknown error';
-      // });
-
       .addCase(fetchFavoriteCards.pending, state => {
         state.loading = true;
       })
@@ -45,10 +30,9 @@ export const favoriteCardsSlice = createSlice({
       })
       .addCase(toggleFavorite.fulfilled, (state, action) => {
         state.favoriteCards = action.payload;
-        console.log('herer state.favoriteCards', state.favoriteCards);
       })
       .addCase(toggleFavorite.rejected, (state, action) => {
-        console.error(action.payload);
+        state.error = action.payload as string;
       });
   },
 });

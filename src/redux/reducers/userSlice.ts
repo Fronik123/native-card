@@ -28,7 +28,6 @@ export const userSlice = createSlice({
       .addCase(fetchUserData.fulfilled, (state, action) => {
         state.loading = false;
         state.userData = action.payload;
-        console.log('action', action.payload);
       })
       .addCase(fetchUserData.rejected, (state, action) => {
         state.loading = false;

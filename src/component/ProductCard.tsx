@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
 
     paddingBottom: 10,
     backgroundColor: '#F4F4F4',
+    minHeight: 180,
   },
 
   wrapperImg: {

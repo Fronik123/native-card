@@ -14,8 +14,6 @@ import {StackNavigationProp} from '@react-navigation/stack';
 
 import {StateType, DispatchType} from './../redux/store';
 import {useDispatch, useSelector} from 'react-redux';
-import auth from '@react-native-firebase/auth';
-import firebase from '@react-native-firebase/firestore';
 
 //component
 import ProductCard from '../component/ProductCard';
@@ -29,16 +27,20 @@ const cardWidth = screenWidth / 2 - 15;
 
 const MyProductsScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
-  const {cards} = useSelector((state: StateType) => state.cards);
-  const userId = auth().currentUser?.uid;
 
-  const filterProduct = cards.filter(item => item.userId === userId);
-  console.log('filterProduct', filterProduct);
+  const {cards, loading} = useSelector((state: StateType) => state.cards);
+  const {userData} = useSelector((state: StateType) => state.user);
+
+  const filterProduct = useMemo(() => {
+    return cards.filter(item => item.userId === userData?.id);
+  }, [cards, userData]);
 
   useEffect(() => {}, []);
 
   return (
     <>
+      {loading && <ActivityIndicator size="large" color="green" />}
+
       {filterProduct.length ? (
         <View style={styles.container}>
           <FlatList
