@@ -1,14 +1,12 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
   Image,
 } from 'react-native';
-import CustomButton from '../component/CustomButton';
 import {RootStackParamList} from '../types/pageTypes';
 import {StackNavigationProp} from '@react-navigation/stack';
 
@@ -24,19 +22,15 @@ import {logout} from '../redux/reducers/authSlice';
 //component
 import CustomLongButton from '../component/CustomLongButton';
 
-//type
-import {UserData} from '../types/userData';
+import DefaultPerson from '../assets/icon/profile-person/default-person.png';
+
 type Props = {
-  // navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+  navigation: StackNavigationProp<RootStackParamList, 'SettingStack'>;
 };
 
 const SettingScreen: React.FC<Props> = ({navigation}) => {
   const dispatch = useDispatch<DispatchType>();
-  // const {user, loading, error} = useSelector(
-  //   (state: {user: UserData}) => state.user,
-  // );
 
-  const {cards, loading} = useSelector((state: StateType) => state.cards);
   const {userData, loading: userLoading} = useSelector(
     (state: StateType) => state.user,
   );
@@ -74,7 +68,18 @@ const SettingScreen: React.FC<Props> = ({navigation}) => {
       ) : (
         <View>
           <View style={styles.containerImg}>
-            <Image source={{uri: userData?.img}} width={30} height={30} />
+            {userData?.img ? (
+              <Image
+                source={{uri: userData?.img || DefaultPerson}}
+                width={30}
+                height={30}
+              />
+            ) : (
+              <Image
+                style={styles.defaultPerson}
+                source={require('../assets/icon/profile-person/default-person.png')}
+              />
+            )}
           </View>
 
           <View style={styles.containerInfo}>
@@ -118,6 +123,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F4F4',
     height: 150,
     marginBottom: 26,
+  },
+
+  defaultPerson: {
+    width: 50,
+    height: 50,
   },
 
   containerImg: {

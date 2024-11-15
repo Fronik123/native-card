@@ -19,9 +19,7 @@ export type RootStackParamList = {
   CurrentCategoryScreen: undefined;
   ShowAllCardsScreen: {cards: Product[]};
   FavoritesCardsScreen: undefined;
-  EditProfileScreen: {userData: UserData};
-  // TabNavig: undefined;
-  // SettingStack: undefined;
+  EditProfileScreen: {userData: UserData | null};
 };
 
 export type RootBottomParamList = {

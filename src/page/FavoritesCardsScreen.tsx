@@ -1,5 +1,12 @@
 import React, {useMemo} from 'react';
-import {View, StyleSheet, FlatList, Dimensions, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Dimensions,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -15,16 +22,14 @@ import CustomButton from '../component/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {StateType, DispatchType} from './../redux/store';
 
-// type CategoryScreenProps = StackNavigationProp<
+// type FavoritesCardsScreenProps = StackNavigationProp<
 //   RootStackParamList,
-//   'CategoryScreen'
+//   'FavoritesCardsScreen'
 // >;
 
-// type Props = {
-//   // navigation: CategoryScreenProps;
-//   navigation: any;
-//   route: RouteProp<RootStackParamList, 'CategoryScreen'>;
-// };
+type Props = {
+  navigation: any;
+};
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = screenWidth / 2 - 15;
@@ -46,6 +51,8 @@ const FavoritesCardsScreen: React.FC<Props> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      {loading && <ActivityIndicator size="large" color="green" />}
+
       {favoriteCards.length ? (
         <FlatList
           data={filterCards}

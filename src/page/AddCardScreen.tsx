@@ -97,7 +97,6 @@ const AddCardScreen: React.FC<Props> = ({navigation}) => {
         },
       ]);
       dispatch(getDataFirebase());
-      navigation.goBack();
     }
   }, [dispatch, loading, navigation, error]);
 

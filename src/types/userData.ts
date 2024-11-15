@@ -5,9 +5,12 @@ export type UserData = {
   surname: string;
   phone?: string;
   email: string;
+  password: string;
 };
 
 export type UpdateUser = {
   userId: string;
   newData: UserData;
 };
+
+export type NewUserData = Omit<UserData, 'id'>;

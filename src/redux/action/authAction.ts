@@ -1,6 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createAsyncThunk} from '@reduxjs/toolkit';
+
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
+import {NewUserData} from '../../types/userData';
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
@@ -29,24 +33,38 @@ export const loginUser = createAsyncThunk(
   },
 );
 
-// export const registerUser = createAsyncThunk(
-//   'auth/registerUser',
-//   async (
-//     {email, password}: {email: string; password: string},
-//     {rejectWithValue},
-//   ) => {
-//     try {
-//       const userCredential = await auth().createUserWithEmailAndPassword(
-//         email,
-//         password,
-//       );
-//       await AsyncStorage.setItem(
-//         'auth',
-//         JSON.stringify({email: userCredential.user.email}),
-//       );
-//       return {email: userCredential.user.email};
-//     } catch (error: any) {
-//       return rejectWithValue(error.message);
-//     }
-//   },
-// );
+export const registerUser = createAsyncThunk(
+  'auth/registerUser',
+  async (
+    {email, password, phone, surname, name, img = ''}: NewUserData,
+    {rejectWithValue},
+  ) => {
+    try {
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+
+      await firestore().collection('users').doc(userCredential.user.uid).set({
+        img,
+        name,
+        email,
+        phone,
+        surname,
+      });
+
+      await AsyncStorage.setItem(
+        'auth',
+        JSON.stringify({email, phone, surname}),
+      );
+
+      return {email, phone, surname};
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        return rejectWithValue({email: 'Email already in use'});
+      } else {
+        return rejectWithValue('Registration error. Try again.');
+      }
+    }
+  },
+);

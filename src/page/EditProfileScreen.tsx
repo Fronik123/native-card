@@ -35,7 +35,9 @@ const EditProfileScreen: React.FC<Props> = ({navigation, route}) => {
     name: Yup.string().required('Required field'),
     surname: Yup.string(),
     email: Yup.string().required('Required field'),
-    phone: Yup.number().required('Required field'),
+    phone: Yup.number()
+      .required('Required field')
+      .typeError('Only digits are allowed'),
   });
 
   useEffect(() => {
