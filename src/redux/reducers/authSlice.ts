@@ -1,12 +1,17 @@
-import {loginUser, registerUser} from '../action/authAction.ts';
+import {
+  loginUser,
+  registerUser,
+  checkAuthStatus,
+  logOut,
+} from '../action/authAction.ts';
 import {createSlice} from '@reduxjs/toolkit';
-// export type User = {
-//   email: string;
-// };
+
+export type User = {
+  email: string;
+};
 
 interface AuthState {
   user: {email: string | null} | null;
-  loginTest: boolean;
   loading: boolean;
   error: string | null;
   success: boolean;
@@ -14,7 +19,6 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  loginTest: false,
   loading: false,
   success: false,
   error: null,
@@ -24,11 +28,11 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state, action) => {
-      state.user = action.payload;
-    },
     resetSuccess: state => {
       state.success = false;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
     },
   },
   extraReducers: builder => {
@@ -58,8 +62,25 @@ export const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(checkAuthStatus.pending, state => {
+        state.loading = true;
+      })
+      .addCase(checkAuthStatus.fulfilled, state => {
+        state.loading = false;
+      })
+      .addCase(logOut.pending, state => {
+        state.loading = true;
+      })
+      .addCase(logOut.fulfilled, state => {
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(logOut.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
-export const {logout, resetSuccess} = authSlice.actions;
+export const {resetSuccess, setUser} = authSlice.actions;
 export default authSlice.reducer;

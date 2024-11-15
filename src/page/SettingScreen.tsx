@@ -17,7 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchUserData} from '../redux/action/userAction';
 
 //slice
-import {logout} from '../redux/reducers/authSlice';
+import {logOut} from '../redux/action/authAction';
 
 //component
 import CustomLongButton from '../component/CustomLongButton';
@@ -37,7 +37,7 @@ const SettingScreen: React.FC<Props> = ({navigation}) => {
   // const isOwner = cards.id === userData?.id;
 
   const LogOut = () => {
-    dispatch(logout(null));
+    dispatch(logOut());
   };
 
   const Edit = () => {

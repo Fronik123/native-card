@@ -45,9 +45,9 @@ const DetailsScreen: React.FC<Props> = ({navigation, route}) => {
       </View>
 
       <CustomButton
-        borderColor="#002984"
+        borderColor="#8E6CEF"
         outline={true}
-        textColor="#002984"
+        textColor="#8E6CEF"
         text="Back"
         onPress={() => navigation.goBack()}
       />

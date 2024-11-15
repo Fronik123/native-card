@@ -11,6 +11,12 @@ const store = configureStore({
     user: userRedecer,
     favorites: favoriteCardsSlice,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['auth/checkAuthStatus/fulfilled'],
+      },
+    }),
 });
 
 export type DispatchType = typeof store.dispatch;

@@ -6,6 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 
 import {NewUserData} from '../../types/userData';
 
+import {setUser} from '../../redux/reducers/authSlice';
+
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (
@@ -68,6 +70,43 @@ export const registerUser = createAsyncThunk(
       } else {
         return rejectWithValue('Registration error. Try again.');
       }
+    }
+  },
+);
+
+export const checkAuthStatus = createAsyncThunk(
+  'auth/checkAuthStatus',
+  async (_, {dispatch, rejectWithValue}) => {
+    try {
+      const unsubscribe = auth().onAuthStateChanged((user: any) => {
+        if (user) {
+          const data = {
+            uid: user.uid,
+            email: user.email,
+          };
+          dispatch(setUser(data));
+        } else {
+          dispatch(setUser(null));
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const logOut = createAsyncThunk(
+  'auth/logOut',
+  async (_, {rejectWithValue}) => {
+    try {
+      await auth().signOut();
+
+      AsyncStorage.clear();
+      return null;
+    } catch (error) {
+      rejectWithValue(error);
     }
   },
 );
